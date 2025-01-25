@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:ble/Material/backDialog.dart';
 import 'package:ble/Material/constants.dart';
+import 'package:ble/classes/Beacon.dart';
 import 'package:ble/classes/devices.dart';
 import 'package:ble/main.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,20 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:math';
 import '../Material/components.dart';
 
-class DeviceListPage extends State<MyHomePage> {
+class DeviceListPage extends StatefulWidget {
+  
+
+  const DeviceListPage({super.key});
+
+  @override
+  _DeviceListPage createState() => _DeviceListPage();
+}
+
+class _DeviceListPage extends State<DeviceListPage> {
+  final List<DeviceWrapper> devicesList = <DeviceWrapper>[];
+  final List<Beacon> beacons = <Beacon>[];
+  // final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
+  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
   final _writeController = TextEditingController();
   int rssiAtOneMeter = -59;
   double pathLossExponent = 2.0;
@@ -29,16 +43,16 @@ class DeviceListPage extends State<MyHomePage> {
   bool isLoading = false;
 
   _addDeviceTolist(final DeviceWrapper device) {
-    if (!widget.devicesList.contains(device)) {
+    if (!devicesList.contains(device)) {
       setState(() {
-        widget.devicesList.add(device);
+        devicesList.add(device);
       });
     }
   }
 
   _clearDeviceList() {
     setState(() {
-      widget.devicesList.clear();
+      devicesList.clear();
     });
   }
 
@@ -51,7 +65,7 @@ class DeviceListPage extends State<MyHomePage> {
     subscription = FlutterBluePlus.onScanResults.listen(
       (results) {
         if (results.isNotEmpty) {
-          widget.devicesList
+          devicesList
               .clear(); // Clear the list to update it with fresh data
           for (ScanResult result in results) {
             dev.log(result.device.toString(), name: 'list');
@@ -128,7 +142,7 @@ class DeviceListPage extends State<MyHomePage> {
 
   ListView _buildListViewOfDevices() {
     List<Widget> containers = <Widget>[];
-    for (DeviceWrapper o in widget.devicesList) {
+    for (DeviceWrapper o in devicesList) {
       containers.add(
         SizedBox(
           height: 50,
@@ -147,7 +161,6 @@ class DeviceListPage extends State<MyHomePage> {
               CustomButton(
                   text: "Show Details",
                   width: 150,
-                  textColor: Colors.white,
                   onPressed: () {
                     // FlutterBluePlus.stopScan();
                     // try {
@@ -196,7 +209,7 @@ class DeviceListPage extends State<MyHomePage> {
               onPressed: () async {
                 var sub = characteristic.lastValueStream.listen((value) {
                   setState(() {
-                    widget.readValues[characteristic.uuid] = value;
+                    readValues[characteristic.uuid] = value;
                   });
                 });
                 await characteristic.read();
@@ -268,7 +281,7 @@ class DeviceListPage extends State<MyHomePage> {
               onPressed: () async {
                 characteristic.lastValueStream.listen((value) {
                   setState(() {
-                    widget.readValues[characteristic.uuid] = value;
+                    readValues[characteristic.uuid] = value;
                   });
                 });
                 await characteristic.setNotifyValue(true);
@@ -309,7 +322,7 @@ class DeviceListPage extends State<MyHomePage> {
                   children: <Widget>[
                     Expanded(
                         child: Text(
-                            'Value: ${widget.readValues[characteristic.uuid]}')),
+                            'Value: ${readValues[characteristic.uuid]}')),
                   ],
                 ),
                 const Divider(),
@@ -407,7 +420,7 @@ class DeviceListPage extends State<MyHomePage> {
                   ),
                 ), // Top half
                 Text(
-                  widget.devicesList.length.toString(),
+                  devicesList.length.toString(),
                   textAlign: TextAlign.center,
                 ),
               ],

@@ -1,3 +1,4 @@
+import 'package:ble/Utilities/namedRouteHandler.dart';
 import 'package:ble/Views/device_list_view.dart';
 import 'package:ble/classes/Beacon.dart';
 import 'package:ble/classes/devices.dart';
@@ -13,22 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         title: 'BLE Demo',
         debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        onGenerateRoute: routeHandler,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MyHomePage(title: 'Flutter BLE Demo'),
       );
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  final String title;
-  final List<DeviceWrapper> devicesList = <DeviceWrapper>[];
-  final List<Beacon> beacons = <Beacon>[];
-  // final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
-  final Map<Guid, List<int>> readValues = <Guid, List<int>>{};
-
-  @override
-  DeviceListPage createState() => DeviceListPage();
-}
