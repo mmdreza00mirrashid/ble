@@ -12,9 +12,9 @@ extension ProfInfoExtension on Widget {
     TextEditingController idController,
     TextEditingController sirnameController,
     TextEditingController nameController,
-    TextEditingController drController,
-    TextEditingController clinicNameController,
-    TextEditingController clinicIDController,
+    TextEditingController profIdController,
+    TextEditingController facultyController,
+    TextEditingController roomController,
     TextEditingController phoneNumController,
     TextEditingController passController,
     TextEditingController passConfController,
@@ -50,7 +50,7 @@ extension ProfInfoExtension on Widget {
               flex: 3,
               child: CustomTextField(
                 hintText: "Faculty",
-                controller: clinicNameController,
+                controller: facultyController,
               ),
             ),
             const SizedBox(width: 10.0),
@@ -58,7 +58,7 @@ extension ProfInfoExtension on Widget {
               flex: 3,
               child: CustomTextField(
                 hintText: "Room Number",
-                controller: clinicIDController,
+                controller: roomController,
               ),
             ),
           ],
@@ -66,7 +66,7 @@ extension ProfInfoExtension on Widget {
         SizedBox(height: rowSpace),
         CustomTextField(
           hintText: "Uni Validation Id",
-          controller: drController,
+          controller: profIdController,
         ),
         SizedBox(height: rowSpace),
         CustomTextField(
@@ -93,7 +93,7 @@ extension ProfInfoExtension on Widget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: CustomCheckbox(
-            text: "I have read and accept rules",
+            text: "I have read and accept the rules",
             controller: checkboxController,
             width: widthDevice,
             onTap: () => acceptRules(checkboxController),
@@ -110,11 +110,11 @@ extension StudentInfoExtension on Widget {
   Widget StudentInfoWidget(
     BuildContext context,
     TextEditingController idController,
-    TextEditingController heightController,
+    TextEditingController educationalStageController,
     TextEditingController nameController,
     TextEditingController datecontroller,
     TextEditingController sirnameController,
-    TextEditingController weightController,
+    TextEditingController majorController,
     ValueNotifier<String> genderController,
     TextEditingController passController,
     TextEditingController passConfController,
@@ -180,7 +180,7 @@ extension StudentInfoExtension on Widget {
               child: CustomTextField(
                 hintText: "Major",
                 // height: heightField,
-                controller: weightController,
+                controller: majorController,
               ),
             ),
             Expanded(
@@ -188,7 +188,7 @@ extension StudentInfoExtension on Widget {
               child: CustomTextField(
                 hintText: "Educational Stage",
                 // height: heightField,
-                controller: heightController,
+                controller: educationalStageController,
               ),
             ),
           ],

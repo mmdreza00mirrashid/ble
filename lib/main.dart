@@ -4,6 +4,7 @@ import 'package:ble/classes/Beacon.dart';
 import 'package:ble/classes/devices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) => GetMaterialApp(
         title: 'BLE Demo',
         debugShowCheckedModeBanner: false,
         initialRoute: '/',

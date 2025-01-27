@@ -1,4 +1,9 @@
 import 'dart:developer' as dev;
+import 'package:ble/Services/CRUD/Storage.dart';
+import 'package:ble/classes/Professor.dart';
+import 'package:ble/classes/Student.dart';
+import 'package:get/get.dart';
+
 import '../Material/components.dart';
 import '../Material/constants.dart';
 
@@ -76,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 'Project Logo placeHolder'));
                                       },
                                     ),
-                                  ), 
+                                  ),
                                 ),
                                 SizedBox(height: heightDevice * coefYspaceBig),
                               ],
@@ -110,6 +115,7 @@ class _MyFormState extends State<LoginForm> {
   String _errorMessage = '';
   final idController = TextEditingController();
   final passController = TextEditingController();
+  StrorageService _strorageService = StrorageService();
 
   @override
   void dispose() {
@@ -123,12 +129,26 @@ class _MyFormState extends State<LoginForm> {
       _id = idController.text.trim();
       _password = passController.text.trim();
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        MENU_ROUTE,
-        (_) => false,
-      );
-
-      dev.log("User logged in: ${_id} , ${_password}");
+      Professor? professor = await _strorageService.loginProf(_id, _password);
+      if (professor != null) {
+        Get.snackbar('Welcome ${professor.surname} ${professor.name}',
+            'Successfully Logged in',
+            snackPosition: SnackPosition.TOP, backgroundColor: green);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          MENU_ROUTE,
+          (_) => false,
+        );
+      }
+      Student? student = await _strorageService.loginStudent(_id, _password);
+      if (student != null) {
+        dev.log('huh');
+        Get.snackbar('Welcome ${student.name}', 'Successfully Logged in',
+            snackPosition: SnackPosition.TOP, backgroundColor: green);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          MENU_ROUTE,
+          (_) => false,
+        );
+      }
     } catch (e) {
       dev.log(e.toString(), name: "Login page");
     }

@@ -1,6 +1,10 @@
 import 'dart:developer' as dev show log;
 
 import 'package:ble/Exceptions/Auth_exception.dart';
+import 'package:ble/Services/CRUD/Storage.dart';
+import 'package:ble/classes/Professor.dart';
+import 'package:ble/classes/Student.dart';
+import 'package:get/get.dart';
 
 import '../Extensions/user_info_extension.dart';
 import '../Material/components.dart';
@@ -17,10 +21,10 @@ class CreateAccount extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccount> {
   UserRole selectedRole = UserRole.professor;
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController clinicNameController = TextEditingController();
-  final TextEditingController clinicIDController = TextEditingController();
+  final TextEditingController facultyController = TextEditingController();
+  final TextEditingController roomController = TextEditingController();
   final TextEditingController phoneNumController = TextEditingController();
-  final TextEditingController drController = TextEditingController();
+  final TextEditingController profIdController = TextEditingController();
   final TextEditingController clinicController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordConfirmController =
@@ -28,9 +32,11 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController idController = TextEditingController();
   final TextEditingController sirnameController = TextEditingController();
   final TextEditingController datecontroller = TextEditingController();
-  final TextEditingController weightController = TextEditingController();
-  final TextEditingController heightController = TextEditingController();
+  final TextEditingController majorController = TextEditingController();
+  final TextEditingController educationalStageController =
+      TextEditingController();
   final genderController = ValueNotifier<String>("");
+  StrorageService _strorageService = StrorageService();
   final ValueNotifier<bool> checkboxController = ValueNotifier<bool>(false);
 
   @override
@@ -40,56 +46,74 @@ class _CreateAccountState extends State<CreateAccount> {
     super.dispose();
   }
 
-  Future<void> handleRegisterButtonPressed() async {
+  Future<void> handleStudentRegister() async {
     try {
       if (!checkboxController.value) {
-        throw AuthException(message: "agree to the terms of service");
+        Get.snackbar('Warning', 'Agree to the terms of service',
+            snackPosition: SnackPosition.TOP);
+        return;
       }
       if (passwordController.text != passwordConfirmController.text) {
-        throw AuthException(message: "password confirmation is wrong");
+        Get.snackbar('Warning', 'password confirmation is wrong',
+            snackPosition: SnackPosition.TOP);
+        return;
       }
-      // switch (selectedRole) {
-      //   case UserRole.patient:
-      //     await _authService.patientRegistration(
-      //       idController,
-      //       passwordController,
-      //       heightController,
-      //       nameController,
-      //       datecontroller,
-      //       sirnameController,
-      //       weightController,
-      //       genderController.value,
-      //       UserRole.patient,
-      //     );
-      //     break;
-      //   case UserRole.doctor:
-      //     await _authService.doctorRegistration(
-      //       idController,
-      //       passwordController,
-      //       nameController,
-      //       drController,
-      //       clinicNameController,
-      //       clinicIDController,
-      //       phoneNumController,
-      //       sirnameController,
-      //       UserRole.doctor,
-      //     );
-      //     break;
-      //   case UserRole.physiotherapist:
-      //     await _authService.doctorRegistration(
-      //       idController,
-      //       passwordController,
-      //       nameController,
-      //       drController,
-      //       clinicNameController,
-      //       clinicIDController,
-      //       phoneNumController,
-      //       sirnameController,
-      //       UserRole.physiotherapist,
-      //     );
-      //     break;
-      //   default:
-      // }
+      Student newStudent = Student(
+        id: idController.text,
+        name: nameController.text,
+        educationalStage: educationalStageController.text,
+        major: majorController.text,
+        gender: genderController.value,
+        password: passwordController.text,
+      );
+
+      bool result = await _strorageService.addStudent(newStudent);
+      if (result) {
+        Get.snackbar(
+            'Welcome ${nameController.text}', 'Successfully Registered',
+            snackPosition: SnackPosition.TOP, backgroundColor: green);
+        Navigator.of(context).pop();
+      } else {
+        Get.snackbar('Error', 'There was a problem registering you',
+            snackPosition: SnackPosition.TOP, backgroundColor: yellow);
+      }
+      dev.log("Name: ${nameController.text}");
+      dev.log("Password: ${passwordController.text}");
+    } on AuthException catch (e) {
+      e.showError(context);
+    }
+  }
+
+  Future<void> handleProfRegister() async {
+    try {
+      if (!checkboxController.value) {
+        Get.snackbar('Warning', 'Agree to the terms of service',
+            snackPosition: SnackPosition.TOP);
+        return;
+      }
+      if (passwordController.text != passwordConfirmController.text) {
+        Get.snackbar('Warning', 'password confirmation is wrong',
+            snackPosition: SnackPosition.TOP);
+        return;
+      }
+      Professor newProfessor = Professor(
+          id: idController.text,
+          surname: sirnameController.text,
+          name: nameController.text,
+          profId: profIdController.text,
+          faculty: facultyController.text,
+          phoneNum: phoneNumController.text,
+          password: passwordController.text);
+
+      bool result = await _strorageService.addProf(newProfessor);
+      if (result) {
+        Get.snackbar('Welcome Professor', 'Successfully Registered',
+            snackPosition: SnackPosition.TOP, backgroundColor: green);
+        Navigator.of(context).pop();
+      } else {
+        Get.snackbar('Error', 'There was a problem registering you',
+            snackPosition: SnackPosition.TOP, backgroundColor: yellow);
+      }
       dev.log("Name: ${nameController.text}");
       dev.log("Password: ${passwordController.text}");
     } on AuthException catch (e) {
@@ -139,14 +163,14 @@ class _CreateAccountState extends State<CreateAccount> {
                   idController,
                   sirnameController,
                   nameController,
-                  drController,
-                  clinicNameController,
-                  clinicIDController,
+                  profIdController,
+                  facultyController,
+                  roomController,
                   phoneNumController,
                   passwordController,
                   passwordConfirmController,
                   checkboxController,
-                  handleRegisterButtonPressed,
+                  handleProfRegister,
                 ),
               ]),
             ),
@@ -160,16 +184,16 @@ class _CreateAccountState extends State<CreateAccount> {
                   Container().StudentInfoWidget(
                     context,
                     idController,
-                    heightController,
+                    educationalStageController,
                     nameController,
                     datecontroller,
                     sirnameController,
-                    weightController,
+                    majorController,
                     genderController,
                     passwordController,
                     passwordConfirmController,
                     checkboxController,
-                    handleRegisterButtonPressed,
+                    handleStudentRegister,
                   ),
                 ],
               ),

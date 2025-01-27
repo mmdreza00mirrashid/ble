@@ -60,4 +60,35 @@ const String Change_Password_ROUTE = '/change-password/';
 const String REPORT_ROUTE = '/reports/';
 const String CHOOSE_THEM_ROUTE = '/themes/';
 
+const String dbName = 'myStorage2.db';
+const String dbStudent = 'Student';
+const String dbProf = 'Professor';
+
+const String createStudentTable = '''
+CREATE TABLE IF NOT EXISTS $dbStudent  (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  birth_date TEXT,
+  surname TEXT,
+  educational_stage TEXT NOT NULL,
+  major TEXT NOT NULL,
+  gender TEXT NOT NULL,
+  password TEXT NOT NULL,
+   salt TEXT NOT NULL
+);
+''';
+const String createProfessorTable = '''
+CREATE TABLE IF NOT EXISTS $dbProf  (
+  id TEXT PRIMARY KEY,
+  surname TEXT NOT NULL,
+  name TEXT NOT NULL,
+  prof_id TEXT NOT NULL UNIQUE,
+  faculty TEXT NOT NULL,
+  room_number TEXT,
+  phone_num TEXT NOT NULL,
+  password TEXT NOT NULL,
+  salt TEXT NOT NULL
+);
+''';
+
 const String Success = 'success';
